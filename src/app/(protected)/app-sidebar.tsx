@@ -13,6 +13,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import useProject from "@/hooks/use-project";
 import { cn } from "@/lib/utils";
 import {
   BotIcon,
@@ -21,6 +22,7 @@ import {
   PlusIcon,
   PresentationIcon,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -47,34 +49,21 @@ const items = [
   },
 ];
 
-const projects = [
-  {
-    title: "Project 1",
-  },
-  {
-    title: "Project 2",
-  },
-  {
-    title: "Project 2a",
-  },
-  {
-    title: "Project 3",
-  },
-  {
-    title: "Project 2c",
-  },
-];
-
 export function AppSidebar() {
   const pathname = usePathname();
   const { open } = useSidebar();
+  const { projects, projectId, setProjectId } = useProject();
 
   return (
     <Sidebar collapsible="icon" variant="floating">
       <SidebarHeader>
-        {open && (
-          <h1 className="text-xl font-bold text-primary/80">Dionysus</h1>
-        )}
+        <div className="flex items-center gap-2">
+          <Image src="/logo.svg" alt="logo" width={40} height={40} />
+
+          {open && (
+            <h1 className="text-xl font-bold text-primary/80">Dionysus</h1>
+          )}
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -109,22 +98,26 @@ export function AppSidebar() {
           <SidebarGroupLabel>Your Projects</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {projects.map((project) => {
+              {projects?.map((project) => {
                 return (
-                  <SidebarMenuItem key={project.title}>
+                  <SidebarMenuItem key={project.name}>
                     <SidebarMenuButton asChild>
-                      <div>
+                      <div
+                        onClick={() => {
+                          setProjectId(project.id);
+                        }}
+                      >
                         <div
                           className={cn(
                             "flex size-6 items-center justify-center rounded-sm border bg-white text-sm text-primary",
                             {
-                              "bg-primary text-white": true,
+                              "bg-primary text-white": project.id === projectId,
                             },
                           )}
                         >
-                          {project.title[0]}
+                          {project.name[0]}
                         </div>
-                        <span>{project.title}</span>
+                        <span>{project.name}</span>
                       </div>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
